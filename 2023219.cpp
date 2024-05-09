@@ -4,13 +4,21 @@
 
 using namespace std;
 
+// ---------- DATA STRUCTURES ------------
+// this class is a representation for an exception not available in standard C++
+// we want to specify when the file is not found compared to a general fstream error
 class file_not_found : public exception{};
 
+// we need to return multiple values with different data types so this struct represents that
 struct TokenData{
 	string* Ptr;
 	int Length;
 };
 
+
+// ---------- USER DEFINED FUNCTIONS ------------
+
+// write only
 void writeFile(string Loc, string Write)
 {
 	ofstream file;
@@ -27,6 +35,7 @@ void writeFile(string Loc, string Write)
 	file.close();
 }
 
+// read only
 void readFile(string Loc)
 {
 	ifstream file;
@@ -48,6 +57,7 @@ void readFile(string Loc)
 	file.close();
 }
 
+// write but to the end
 void appendFile(string Loc, string Write)
 {
 	ofstream file;
@@ -64,6 +74,7 @@ void appendFile(string Loc, string Write)
 	file.close();
 }
 
+// overwrite (truncate)
 void overwriteFile(string Loc, string Write)
 {
 	ofstream file;
@@ -80,6 +91,7 @@ void overwriteFile(string Loc, string Write)
 	file.close();
 }
 
+// read by token 
 TokenData splitText(string Loc)
 {
 	ifstream file;
@@ -112,6 +124,7 @@ TokenData splitText(string Loc)
 	return ret;
 }
 
+// first read, then write
 void readWrite(string Loc, string Write)
 {
 	fstream file; string line;
@@ -133,6 +146,7 @@ void readWrite(string Loc, string Write)
 	file.close();
 }
 
+// entry point
 int main()
 {
 	char userChoice[5]; // we take a string because the user might accidentally enter multiple chars, we will always use first char
@@ -150,6 +164,7 @@ int main()
 		if(tolower(userChoice[0]) == 'e'){
 			break;
 		}
+		// a lot of the errors are handled on a preventive basis (like file length errors)
 		try{
 			switch (tolower(userChoice[0])){
 				case 'w':
@@ -214,15 +229,19 @@ int main()
 					cout << "Invalid input, please try again";
 			}
 		}	
+		// when the file is not found
 		catch(const file_not_found& E){
 			cout << "Error reading file: not found";
 		}
+		// generally occurs when you add unrecognised characters or the data overflows
 		catch (const ios_base::failure& E){
 			cout << "Input/Output failure, is the data too long or did you enter unrecognised special characters (like from unicode)?";
 		}
+		// we generally run into this when we do not have proper access to the file
 		catch (const fstream::failure& E){
-			cout << "General file operation failure";
+			cout << "General file operation failure, maybe you dont have the proper read/write access?";
 		}
+		// catch all
 		catch (...)
 		{
 			cout << "Unknown error";
