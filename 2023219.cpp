@@ -191,6 +191,8 @@ int main()
 
 					appendFile(fileName, fileData);
 
+					break;
+
 				case 'o':
 					cout << "Please enter the path to file: ";
 					cin.getline(fileName, sizeof(fileName));
